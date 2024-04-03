@@ -53,6 +53,7 @@ const login = (req, res) => {
             } else {
                 const userPassword = result.rows[0].password;
                 if (password == userPassword) {
+                    console.log('user login with email', result.rows[0].email);
                     res.status(200).json({ message: 'login succesful' });
                 } else {
                     res.status(400).json({ message: 'email or password is wrong' });
