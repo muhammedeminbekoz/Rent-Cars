@@ -3,21 +3,20 @@ const query = require('../db/queries');
 
 
 const getUsers = (req, res) => {
-    const query = 'SELECT * FROM users';
 
-    client.execute(query, (err, result) => {
+
+    client.execute(query.getUsers, (err, result) => {
         if (err) {
             console.log(err);
         }
         else {
-            console.log(result);
             res.status(200).json({ data: result.rows })
         }
 
     })
 }
 
-const addUser = (req, res) => {
+const register = (req, res) => {
     const { firstname, lastname, email, password } = req.body;
 
     client.execute(query.checkUserExsist, [email], (err, result) => {
@@ -31,7 +30,7 @@ const addUser = (req, res) => {
                         console.log(err);
                     }
                     else {
-                        console.log(result);
+
                         res.status(200).json({ message: 'User added successfully', data: req.body });
                     }
                 })
@@ -41,8 +40,32 @@ const addUser = (req, res) => {
 
 }
 
+const login = (req, res) => {
+    const { email, password } = req.body;
+
+    client.execute(query.checkUserExsist, [email], (err, result) => {
+        if (err) {
+            console.log('query error', err);
+        }
+        else {
+            if (!result.rowLength) {
+                res.status(400).json({ message: 'email or password is wrong' })
+            } else {
+                const userPassword = result.rows[0].password;
+                if (password == userPassword) {
+                    res.status(200).json({ message: 'login succesful' });
+                } else {
+                    res.status(400).json({ message: 'email or password is wrong' });
+                }
+            }
+        }
+    })
+
+
+}
 
 module.exports = {
     getUsers,
-    addUser
+    register,
+    login
 };
