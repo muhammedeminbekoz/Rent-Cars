@@ -10,18 +10,23 @@ Veri kümesinin küçük olduğunu ve performansın makul olacağını biliyorsa
 
 */
 
-const listCity = 'SELECT city_name FROM cities where city_name = ? ALLOW FILTERING';
-const getCityid = 'SELECT city_id FROM cities where city_name = ? ALLOW FILTERING';
+const listCity = 'SELECT city_name FROM cities WHERE city_name = ? ALLOW FILTERING';
+const getCityId = 'SELECT city_id FROM cities WHERE city_name = ? ALLOW FILTERING';
 
 const addOffice = 'INSERT into offices (office_id, city_id, office_name) VALUES (uuid(), ?, ?)'
 const listOfficeByCity = 'SELECT * FROM  offices WHERE city_id = ? ALLOW FILTERING';
+
+const getOfficeId = 'SELECT office_id FROM offices WHERE office_name = ? ALLOW FILTERING'
+const listCars = 'SELECT * FROM cars WHERE rental_status = True AND office_id = ? ALLOW FILTERING'
 
 module.exports = {
     getUsers,
     addUser,
     checkUserExsist,
     listCity,
-    getCityid,
+    getCityId,
     addOffice,
-    listOfficeByCity
+    listOfficeByCity,
+    getOfficeId,
+    listCars
 }

@@ -7,7 +7,7 @@ const query = require('../db/queries');
 const addOffice = async (req, res) => {
     const { office_name, city_name } = req.body;
 
-    const result = await client.execute(query.getCityid, [city_name]);
+    const result = await client.execute(query.getCityId, [city_name]);
     const cityId = result.rows[0].city_id;
     console.log(cityId);
 
@@ -21,16 +21,18 @@ const addOffice = async (req, res) => {
 };
 
 const listOfficesBycity = async (req, res) => {
-    const cityName = req.params.cityname;
-    console.log(cityName);
-    const result = await client.execute(query.getCityid, [cityName]);
-    const cityId = result.rows[0].city_id;
-    console.log(cityId);
 
-    await client.execute(query.listOfficeByCity, [cityId], (err, result) => {
+    const cityName = req.params.cityname;
+    client.execute(query.getCityId, [cityName], (err, result) => {
         if (err) console.log(err);
         else {
-            res.status(200).json({ data: result.rows })
+            const cityId = result.rows[0].city_id;
+            client.execute(query.listOfficeByCity, [cityId], (err, result) => {
+                if (err) console.log(err);
+                else {
+                    res.status(200).json({ data: result.rows })
+                }
+            })
         }
     })
 
