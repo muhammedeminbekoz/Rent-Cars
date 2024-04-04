@@ -1,6 +1,8 @@
 const express = require('express');
-const client = require('./src/db/connection');
-require('./src/db/connection');
+require('dotenv').config();
+const port = process.env.PORT || 1903;
+
+
 const userRoutes = require('./src/routers/userRoutes');
 const cityRoutes = require('./src/routers/cityRoutes');
 const app = express();
@@ -18,6 +20,7 @@ app.use('/api/city', cityRoutes);
 
 
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log(`http://localhost:3000 is running`);
 })
+

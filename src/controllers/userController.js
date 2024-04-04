@@ -17,6 +17,7 @@ const getUsers = (req, res) => {
 }
 
 const register = (req, res) => {
+    console.log('registiration started')
     const { firstname, lastname, email, password } = req.body;
 
     client.execute(query.checkUserExsist, [email], (err, result) => {
@@ -30,7 +31,6 @@ const register = (req, res) => {
                         console.log(err);
                     }
                     else {
-
                         res.status(200).json({ message: 'User added successfully', data: req.body });
                     }
                 })
@@ -49,6 +49,7 @@ const login = (req, res) => {
         }
         else {
             if (!result.rowLength) {
+                console.log('email or password is wrong')
                 res.status(400).json({ message: 'email or password is wrong' })
             } else {
                 const userPassword = result.rows[0].password;
@@ -56,6 +57,7 @@ const login = (req, res) => {
                     console.log('user login with email', result.rows[0].email);
                     res.status(200).json({ message: 'login succesful' });
                 } else {
+                    console.log('email or password is wrong')
                     res.status(400).json({ message: 'email or password is wrong' });
                 }
             }
