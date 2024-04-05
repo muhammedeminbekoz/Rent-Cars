@@ -1,4 +1,5 @@
 const getUsers = 'SELECT * FROM users';
+const getUserById = 'SELECT * FROM users WHERE id = ? ALLOW FILTERING'
 const addUser = 'INSERT INTO users (id, firstname, lastname, email ,password) VALUES (uuid(), ?, ?, ?, ?)'
 const checkUserExsist = 'SELECT id, email, password FROM users WHERE email = ? ALLOW FILTERING'
 /*
@@ -22,6 +23,7 @@ const listCars = 'SELECT * FROM cars WHERE rental_status = True AND office_id = 
 
 module.exports = {
     getUsers,
+    getUserById,
     addUser,
     checkUserExsist,
     listCity,
