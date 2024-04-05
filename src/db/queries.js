@@ -7,6 +7,7 @@ If you know that the dataset is small, and the performance will be reasonable, a
 
 Cassandra, sonuç küçük olsa bile büyük miktarda verinin taranması gerekmeyeceğini garanti edemez.
 Veri kümesinin küçük olduğunu ve performansın makul olacağını biliyorsanız, sorgunun yürütülmesine izin vermek için ALLOW FILTERING'i ekleyin:
+Tablodaki primary key alanlarını kullanarak sorgu yapmak daha verimlidir. Ve ALLOW FILTERING kullanmak gerekmez.
 
 */
 
