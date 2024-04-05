@@ -1,6 +1,7 @@
 const client = require('../db/connection');
 const query = require('../db/queries');
 const bcrypt = require('bcrypt');
+const { createToken } = require('../middlewares/authentication/auth');
 
 const getUsers = (req, res) => {
 
@@ -65,8 +66,10 @@ const login = (req, res) => {
                 const hashedPassword = bcrypt.compareSync(password, result.rows[0].password);
 
                 if (hashedPassword) {
-                    console.log('user login with email', result.rows[0].email);
-                    res.status(200).json({ message: 'login succesful' });
+                    const jwtToken = createToken(result.rows[0].id);
+                    console.log(jwtToken);
+                    console.log('user login with email', result.rows[0]);
+                    res.status(200).json({ message: 'login succesful', token: jwtToken });
                 } else {
                     console.log('email or password is wrong')
                     res.status(400).json({ message: 'email or password is wrong' });
