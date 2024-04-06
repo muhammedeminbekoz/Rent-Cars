@@ -2,6 +2,9 @@ const getUsers = 'SELECT * FROM users';
 const getUserById = 'SELECT * FROM users WHERE id = ? ALLOW FILTERING'
 const addUser = 'INSERT INTO users (id, firstname, lastname, email ,password) VALUES (uuid(), ?, ?, ?, ?)'
 const checkUserExsist = 'SELECT id, email, password FROM users WHERE email = ? ALLOW FILTERING'
+const updateUser = 'UPDATE users SET firstname = ?, lastname = ? WHERE id = ?'
+    ;
+
 /*
 Cassandra cannot guarantee that large amounts of data won’t have to scanned amount of data, even if the result is small.
 If you know that the dataset is small, and the performance will be reasonable, add ALLOW FILTERING to allow the query to execute:
@@ -26,6 +29,7 @@ module.exports = {
     getUserById,
     addUser,
     checkUserExsist,
+    updateUser,
     listCity,
     getCityId,
     addOffice,

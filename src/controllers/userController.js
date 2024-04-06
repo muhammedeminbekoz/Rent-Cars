@@ -1,6 +1,7 @@
 const client = require('../db/connection');
 const query = require('../db/queries');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { createToken } = require('../middlewares/authentication/auth');
 
 const getUsers = (req, res) => {
@@ -81,8 +82,31 @@ const login = (req, res) => {
 
 }
 
+const update = async (req, res) => {
+    const { firstname, lastname } = req.body;
+    const token = req.headers.authorization.split(' ')[1];
+    const verifyedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = verifyedToken.sub.userId
+    console.log('userId :', userId);
+    /* const bufferedUserId = await Buffer.from(userId)
+    console.log(userId);
+    console.log(bufferedUserId); */
+
+    await client.execute(query.updateUser, [firstname, lastname, userId], (err, result) => {
+        if (err) {
+            res.status(400).json({ success: false, message: "query error" });
+            console.log('query error: ', err);
+        }
+        else {
+            res.status(200).json({ success: true, data: [firstname, lastname], message: 'user updated successfully' });
+        }
+    })
+
+}
+
 module.exports = {
     getUsers,
     register,
-    login
+    login,
+    update
 };

@@ -40,8 +40,11 @@ const registerValidation = (req, res, next) => {
         console.log(registerSchema.error.message);
         return res.status(400).json(registerSchema.error)
     }
-    console.log('validation successfull');
-    next();
+    else {
+        console.log('validation successfull');
+        next()
+    }
+    ;
 }
 
 
@@ -68,13 +71,41 @@ const loginValidation = (req, res, next) => {
     if (loginSchema.error) {
         console.log(loginSchema.error.message);
         return res.status(400).json(loginSchema.error);
+    } else {
+        console.log('validation successful');
+        next();
     }
-    next();
 }
 
+const updateValidation = (req, res, next) => {
+    const updateSchema = joi.object({
+        firstname: joi.string().trim().min(3).max(30).required().messages({
+            "string.base": "isim alanı normal metin olmalıdır",
+            "string.empty": "isim alanı boş olamaz",
+            "string.min": "isim alanı en az 3 karakterden olşumalıdır",
+            "string.max": "isim alanı en fazla 50 karakterden oluşmalıdır",
+            "string.required": "isim alanı zorunludur",
+        }),
+        lastname: joi.string().trim().min(2).max(30).required().messages({
+            "string.base": "soyad alanı metin olmalıdır",
+            "string.empty": "soyad alanı boş bırakılamaz",
+            "string.min": "soyad alanı en az 3 karakterden olşumalıdır",
+            "string.max": "soyad alanı en fazla 50 karakterden oluşmalıdır",
+            "string.required": "soyad alanı zorunludur",
+        }),
+    }).validate(req.body);
+    if (updateSchema.error) {
+        console.log(updateSchema.error.message);
+        return res.status(400).json(updateSchema.error)
+    } else {
+        console.log('validation successfull');
+        next();
+    }
+}
 
 
 module.exports = {
     registerValidation,
-    loginValidation
+    loginValidation,
+    updateValidation
 };

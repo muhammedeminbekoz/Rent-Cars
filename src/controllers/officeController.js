@@ -27,6 +27,8 @@ const listOfficesBycity = async (req, res) => {
         if (err) console.log(err);
         else {
             const cityId = result.rows[0].city_id;
+            console.log(typeof cityId);
+            console.log(cityId);
             client.execute(query.listOfficeByCity, [cityId], (err, result) => {
                 if (err) console.log(err);
                 else {

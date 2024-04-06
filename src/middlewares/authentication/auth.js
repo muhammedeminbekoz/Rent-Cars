@@ -33,14 +33,16 @@ const tokenCheck = async (req, res, next) => {
         const verifyedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
         console.log(verifyedToken.sub.userId);
         client.execute(query.getUserById, [verifyedToken.sub.userId], (err, result) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err);
+                res.status(400).json({ success: false, message: 'token uyuşmuyor lütfen giriş yapınız' })
+            }
             else {
 
                 next();
             }
+            console.log('tokencheck bitti');
         })
-
-
 
     }
 
