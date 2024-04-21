@@ -3,6 +3,7 @@ const query = require('../db/queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createToken } = require('../middlewares/authentication/auth');
+const emailModule = require('../utils/email');
 
 const getUsers = (req, res) => {
 
@@ -34,12 +35,15 @@ const register = (req, res) => {
                         console.log(err);
                     }
                     else {
-                        console.log(result);
+                        emailModule.sendAuthanticationEmail(email);
+                        const authCode = emailModule.authanticationCode;
+                        console.log('isim:' + firstname, 'email:' + email)
                         res.status(200).json({
                             message: 'User added successfully', data: [
                                 firstname,
                                 lastname,
-                                email
+                                email,
+                                authCode
                             ]
 
 
@@ -49,7 +53,7 @@ const register = (req, res) => {
             }
         }
     })
-
+    console.log('registiration tamamlandı')
 }
 
 const login = (req, res) => {
