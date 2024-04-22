@@ -18,11 +18,19 @@ Tablodaki primary key alanlarını kullanarak sorgu yapmak daha verimlidir. Ve A
 const listCity = 'SELECT city_name FROM cities WHERE city_name = ? ALLOW FILTERING';
 const getCityId = 'SELECT city_id FROM cities WHERE city_name = ? ALLOW FILTERING';
 
+/* update cities set offices = offices + [{office_id : uuid(),office_name :  'Sürmene ofisi'}] where city_id = 2871e28c-90a7-4876-
+8a03-3d5dec871f53; */
+
 const addOffice = 'INSERT into offices (office_id, city_id, office_name) VALUES (uuid(), ?, ?)'
 const listOfficeByCity = 'SELECT * FROM  offices WHERE city_id = ? ALLOW FILTERING';
 
 const getOfficeId = 'SELECT office_id FROM offices WHERE office_name = ? ALLOW FILTERING'
 const listCars = 'SELECT * FROM cars WHERE rental_status = True AND office_id = ? ALLOW FILTERING'
+
+
+
+const getRentalInfo = 'SELECT * FROM rentalinfo';
+
 
 module.exports = {
     getUsers,
@@ -35,5 +43,6 @@ module.exports = {
     addOffice,
     listOfficeByCity,
     getOfficeId,
-    listCars
+    listCars,
+    getRentalInfo
 }

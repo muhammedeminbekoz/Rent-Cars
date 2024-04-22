@@ -5,6 +5,7 @@ const port = process.env.PORT || 1903;
 
 const userRoutes = require('./src/routers/userRoutes');
 const cityRoutes = require('./src/routers/cityRoutes');
+const rentalRoutes = require('./src/routers/rentalRoutes');
 const app = express();
 app.use(express.json());
 
@@ -16,6 +17,7 @@ app.get('/', async (req, res) => {
 
 app.use('/api/user', userRoutes);
 app.use('/api/city', cityRoutes);
+app.use('/api/rental', rentalRoutes);
 
 
 
