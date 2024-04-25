@@ -103,9 +103,41 @@ const updateValidation = (req, res, next) => {
     }
 }
 
+const verifyValidation = (req, res, next) => {
+    console.log('validation started');
+    const verifySchema = joi.object({
+        email: joi.string().trim().empty().email().required().messages({
+            "string.base": "email alanı metin olmalıdır",
+            "string.empty": "email alanı boş bırakılamaz",
+            "string.email": "lütfen geçerli bir email giriniz",
+            "string.min": "email alanı en az 3 karakterden olşumalıdır",
+            "string.max": "email alanı en fazla 100 karakterden oluşmalıdır",
+            "string.required": "email alanı zorunludur",
+
+        }),
+        userVerifyCode: joi.string().empty().trim().min(6).max(6).required().messages({
+            "string.base": "doğrulama kodu alanı metin olmalıdır",
+            "string.empty": "doğrulama kodu alanı boş bırakılamaz",
+            "string.min": "doğrulama kodu alanı 6 karater olmalıdır",
+            "string.max": "doğrulama kodu alanı 6 karater olmalıdır",
+            "string.required": "doğrulam kodu alanı zournludur",
+
+        })
+    }).validate(req.body);
+    if (verifySchema.error) {
+        console.log(verifySchema.error.message);
+        return res.status(400).json(verifySchema.error);
+
+    } else {
+        console.log("validation successful");
+        next();
+    }
+    console.log("next");
+}
 
 module.exports = {
     registerValidation,
     loginValidation,
-    updateValidation
+    updateValidation,
+    verifyValidation
 };
