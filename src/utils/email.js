@@ -3,7 +3,7 @@ require('dotenv').config();
 
 
 
-const authanticationCode = Math.floor(Math.random() * 1000000);
+const verifyCode = Math.floor(Math.random() * 900000) + 100000;
 
 const createEmailTemplate = () => {
     return `
@@ -66,7 +66,7 @@ const createEmailTemplate = () => {
     <body>
         <h1>Hoş Geldiniz!</h1>
         <div class="image-container">
-            <div class="verification-code">Doğrulama Kodu:${authanticationCode}</div>
+            <div class="verification-code">Doğrulama Kodu:${verifyCode}</div>
         </div>
         <p>Merhaba,</p>
         <p>Hesabınız başarıyla oluşturuldu. Lütfen aşağıdaki doğrulama kodunu kullanarak hesabınızı aktive edin:</p>
@@ -125,18 +125,18 @@ const selectMailOptions = (to) => {
         }
     })
 } */
-const sendAuthanticationEmail = (to) => {
+const sendVerificationEmail = (to) => {
     console.log('mail gönderimi başladı');
     transporter.sendMail(selectMailOptions(to), (err, data) => {
         if (err) console.log(err);
         else {
-            console.log('mail gönderildi', authanticationCode);
+            console.log('mail gönderildi', verifyCode);
         }
     })
     console.log('mail gönderimi tamalandı');
 }
 
 module.exports = {
-    sendAuthanticationEmail,
-    authanticationCode
+    sendVerificationEmail,
+    verifyCode
 };
