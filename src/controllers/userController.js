@@ -122,6 +122,21 @@ const update = async (req, res) => {
 
 }
 
+const deleteUser = (req, res) => {
+    const { userId } = req.body;
+    client.execute(query.deleteUser, [userId], (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ success: false, message: "server error" });
+        }
+        else {
+            console.log(result);
+            res.status(200).json({ success: true, message: "user deleted successfully" });
+        }
+    })
+
+}
+
 const verifyUser = (req, res) => {
     const { email, userVerifyCode } = req.body;
 
@@ -140,7 +155,7 @@ const verifyUser = (req, res) => {
                     res.status(500).json({ success: false, message: "server error" });
                 }
                 else {
-                    const verifyCode = result.rows[0].verifycode;
+                    const verifyCode = result?.rows[0]?.verifycode;
                     console.log(verifyCode);
                     console.log(userVerifyCode);
                     if (userVerifyCode === verifyCode) {
@@ -171,5 +186,6 @@ module.exports = {
     register,
     login,
     update,
+    deleteUser,
     verifyUser
 };
