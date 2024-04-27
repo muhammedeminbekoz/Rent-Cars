@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const verifyCode = Math.floor(Math.random() * 900000) + 100000;
 
-const createEmailTemplate = () => {
+const verificationEmailTemplate = () => {
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -96,6 +96,7 @@ const createEmailTemplate = () => {
         ;
 };
 
+
 const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     auth: {
@@ -104,30 +105,53 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const resetPasswordEmailTemplate = () => {
+    return `
+   <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parola Sıfırlama Talebi</title>
+</head>
+<body>
+    <p>Merhaba</p>
+    <p>Parolanızı sıfırlamak için bize iletmiş olduğunuz talep aldık. Parolanızı sıfırlamak için lütfen aşağıdaki bağlantıya tıklayın:</p>
+    <p><a href="https://bys.ktu.edu.tr/" target="_blank">Parolamı Sıfırla</a></p>
+    <p>Bağlantıyı tıkladığınızda, sizi parola sıfırlama sayfasına yönlendireceğiz. Yeni bir parola oluşturmak için talimatları izleyebilirsiniz.</p>
+    <p>Eğer parolanızı sıfırlamak istemediyseniz, bu e-postayı görmezden gelebilirsiniz. Güvenliğiniz için, bu e-posta üzerinden parolanızı sıfırlamanızı öneririz.</p>
+    <p>Herhangi bir sorunuz varsa, bizimle iletişime geçmekten çekinmeyin.</p>
+    Rent-Cars<br>
 
-const selectMailOptions = (to) => {
+</body>
+</html>`
+}
+
+
+const selectResetPasswordMailOptions = (to) => {
     return mailOptions = {
 
         from: 'm.eminbekoz19@gmail.com',
         to: to,
-        subject: 'Nodemailer test',
-        html: createEmailTemplate(),
+        subject: 'Reset your password',
+        html: resetPasswordEmailTemplate(),
+    }
+}
+
+const selectVerificationMailOptions = (to) => {
+    return mailOptions = {
+
+        from: 'm.eminbekoz19@gmail.com',
+        to: to,
+        subject: 'Verify your account',
+        html: verificationEmailTemplate(),
     }
 }
 
 
-/* const sendEmail = (req, res ,to) => {
-    transporter.sendMail(selectMailOptions, (err, data) => {
-        if (err) console.log(err);
-        else {
-            res.status(200).json({ success: true, message: 'mail gönderildi' })
-            console.log('mail gönderildi');
-        }
-    })
-} */
+
 const sendVerificationEmail = (to) => {
     console.log('mail gönderimi başladı');
-    transporter.sendMail(selectMailOptions(to), (err, data) => {
+    transporter.sendMail(selectVerificationMailOptions(to), (err, data) => {
         if (err) console.log(err);
         else {
             console.log('mail gönderildi', verifyCode);
@@ -136,7 +160,22 @@ const sendVerificationEmail = (to) => {
     console.log('mail gönderimi tamalandı');
 }
 
+const sendResetPasswordEmail = (to) => {
+    console.log('mail gönderimi başladı');
+    transporter.sendMail(selectResetPasswordMailOptions(to), (err, data) => {
+        if (err) console.log(err);
+        else {
+            console.log('mail gönderildi', verifyCode);
+        }
+    })
+    console.log('mail gönderimi tamalandı');
+}
+
+
+
+
 module.exports = {
     sendVerificationEmail,
+    sendResetPasswordEmail,
     verifyCode
 };
