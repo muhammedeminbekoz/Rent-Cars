@@ -1,10 +1,11 @@
 const getUsers = 'SELECT * FROM users';
 const getUserById = 'SELECT * FROM users WHERE id = ? ALLOW FILTERING'
-const addUser = 'INSERT INTO users (id, firstname, lastname, email ,password, verifycode) VALUES (uuid(), ?, ?, ?, ?,?)'
+const addUser = 'INSERT INTO users (id, firstname, lastname, email ,password, verifycode,isverify) VALUES (uuid(), ?, ?, ?, ?,?, false)'
 const checkUserExsist = 'SELECT id, email, password FROM users WHERE email = ? ALLOW FILTERING'
 const updateUser = 'UPDATE users SET firstname = ?, lastname = ? WHERE id = ?'
 const verifyUser = 'SELECT id, verifycode from users WHERE email = ? ALLOW FILTERING';
 const chechkUserisVerifyed = 'SELECT * from users WHERE email = ? ALLOW FILTERING';
+const getUserPassword = 'SELECT password from users WHERE id = ?';
 const deleteUser = 'DELETE FROM users WHERE id = ?';
 
 ;
@@ -66,6 +67,7 @@ module.exports = {
     updateUser,
     verifyUser,
     chechkUserisVerifyed,
+    getUserPassword,
     deleteUser,
     listCity,
     getCityId,
