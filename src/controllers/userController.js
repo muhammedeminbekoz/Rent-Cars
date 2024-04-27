@@ -123,18 +123,36 @@ const update = async (req, res) => {
 }
 
 const deleteUser = (req, res) => {
-    const { userId } = req.body;
-    client.execute(query.deleteUser, [userId], (err, result) => {
+    const { userId, password } = req.body;
+
+    client.execute(query.getUserPassword, [userId], (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).json({ success: false, message: "server error" });
         }
         else {
-            console.log(result);
-            res.status(200).json({ success: true, message: "user deleted successfully" });
+            if (!result?.rows[0]?.password) {
+                res.status(500).json({ success: false, message: "böyle bir kayıt yok" })
+            }
+            else {
+                const comparedPassword = bcrypt.compareSync(password, result?.rows[0]?.password)
+                if (!comparedPassword) {
+                    res.status(401).json({ success: false, message: "password is wrong" });
+                } else {
+                    client.execute(query.deleteUser, [userId], (err, result) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).json({ success: false, message: "server error" });
+                        } else {
+                            res.status(200).json({ success: true, message: "user deleted successfully" });
+                        }
+
+                    })
+                }
+
+            }
         }
     })
-
 }
 
 const verifyUser = (req, res) => {
