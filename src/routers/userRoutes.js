@@ -9,6 +9,7 @@ router.post('/login', loginValidation, userController.login);
 router.put('/update', authorization.tokenCheck, updateValidation, userController.update);
 router.post('/verifyEmail', verifyValidation, userController.verifyUser);
 router.delete('/deleteUser', userController.deleteUser);
-router.
+router.get('/iForgotMyPassword', userController.iForgotMyPassword);
+router.post('/resetPassword', userController.resetPassword);
 
-    module.exports = router;
+module.exports = router;
