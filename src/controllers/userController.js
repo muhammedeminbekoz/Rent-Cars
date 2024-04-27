@@ -198,6 +198,41 @@ const verifyUser = (req, res) => {
     })
 }
 
+const iForgotMyPassword = (req, res) => {
+    const { email } = req.body;
+    client.execute(query.checkUserExsist, [email], (err, result) => {
+        if (err) {
+            res.status(500).json({ success: false, message: "server error" });
+        } else {
+            if (!result?.rows[0]) {
+                res.status(400).json({ success: false, message: "No such email found" });
+            } else {
+                emailModule.sendResetPasswordEmail(email);
+                res.status(200).json({ success: true, message: "An email has been sent to change your password." });
+            }
+
+        }
+    })
+}
+
+const resetPassword = (req, res) => {
+    const { id, password, passwordAgain } = req.body;
+    if (password != passwordAgain) {
+        res.status(401).json({ success: false, message: "We could be the same No matter what they say" });
+    } else {
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        console.log(hashedPassword);
+        client.execute(query.resetPassword, [hashedPassword, id], (err, result) => {
+            if (err) {
+                res.status(500).json({ success: false, message: "server error" });
+            } else {
+                res.status(200).json({ success: true, message: "Your password has been changed successfully" })
+            }
+
+        })
+    }
+
+}
 
 module.exports = {
     getUsers,
@@ -205,5 +240,7 @@ module.exports = {
     login,
     update,
     deleteUser,
-    verifyUser
+    verifyUser,
+    iForgotMyPassword,
+    resetPassword
 };
