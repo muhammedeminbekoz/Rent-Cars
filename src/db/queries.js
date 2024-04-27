@@ -7,7 +7,7 @@ const verifyUser = 'SELECT id, verifycode from users WHERE email = ? ALLOW FILTE
 const chechkUserisVerifyed = 'SELECT * from users WHERE email = ? ALLOW FILTERING';
 const getUserPassword = 'SELECT password from users WHERE id = ?';
 const deleteUser = 'DELETE FROM users WHERE id = ?';
-
+const resetPassword = 'UPDATE users SET password = ? WHERE id = ?';
 ;
 
 /*
@@ -69,6 +69,7 @@ module.exports = {
     chechkUserisVerifyed,
     getUserPassword,
     deleteUser,
+    resetPassword,
     listCity,
     getCityId,
     getCityIds,
