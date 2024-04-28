@@ -27,7 +27,7 @@ const tokenCheck = async (req, res, next) => {
     console.log(authHeader);
 
     if (!authHeader) {
-        res.status(400).json({ success: false, message: 'Bu sayfaya erişiminiz bulunmamaktadır' });
+        res.status(403).json({ success: false, message: 'Bu sayfaya erişiminiz bulunmamaktadır' });
     } else {
         const token = authHeader.split(' ')[1]
         const verifyedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -35,10 +35,9 @@ const tokenCheck = async (req, res, next) => {
         client.execute(query.getUserById, [verifyedToken.sub.userId], (err, result) => {
             if (err) {
                 console.log(err);
-                res.status(400).json({ success: false, message: 'token uyuşmuyor lütfen giriş yapınız' })
+                res.status(403).json({ success: false, message: 'token uyuşmuyor lütfen giriş yapınız' })
             }
             else {
-
                 next();
             }
             console.log('tokencheck bitti');
