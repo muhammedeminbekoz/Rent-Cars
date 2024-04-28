@@ -79,20 +79,33 @@ const loginValidation = (req, res, next) => {
 
 const updateValidation = (req, res, next) => {
     const updateSchema = joi.object({
-        firstname: joi.string().trim().min(3).max(30).required().messages({
+        firstname: joi.string().trim().min(3).max(30).allow('').messages({
             "string.base": "isim alanı normal metin olmalıdır",
-            "string.empty": "isim alanı boş olamaz",
             "string.min": "isim alanı en az 3 karakterden olşumalıdır",
             "string.max": "isim alanı en fazla 50 karakterden oluşmalıdır",
-            "string.required": "isim alanı zorunludur",
         }),
-        lastname: joi.string().trim().min(2).max(30).required().messages({
+        lastname: joi.string().trim().min(2).max(30).allow('').messages({
             "string.base": "soyad alanı metin olmalıdır",
-            "string.empty": "soyad alanı boş bırakılamaz",
             "string.min": "soyad alanı en az 3 karakterden olşumalıdır",
             "string.max": "soyad alanı en fazla 50 karakterden oluşmalıdır",
-            "string.required": "soyad alanı zorunludur",
         }),
+        currentPassword: joi.string().trim().min(6).max(30).required().messages({
+            "string.base": "şifre alanı metin olmalıdır",
+            "string.empty": "şifre alanı boş bırakılamaz",
+            "string.min": "şifre alanı en az 6 karakterden olşumalıdır",
+            "string.max": "şifre alanı en fazla 36 karakterden oluşmalıdır",
+            "string.required": "şifre alanı zorunludur",
+        }),
+        newPassword: joi.string().trim().min(6).max(30).allow('').messages({
+            "string.base": "şifre alanı metin olmalıdır",
+            "string.min": "şifre alanı en az 6 karakterden olşumalıdır",
+            "string.max": "şifre alanı en fazla 36 karakterden oluşmalıdır",
+        }),
+        newPasswordAgain: joi.string().trim().min(6).max(30).allow('').messages({
+            "string.base": "şifre alanı metin olmalıdır",
+            "string.min": "şifre alanı en az 6 karakterden olşumalıdır",
+            "string.max": "şifre alanı en fazla 36 karakterden oluşmalıdır",
+        })
     }).validate(req.body);
     if (updateSchema.error) {
         console.log(updateSchema.error.message);
