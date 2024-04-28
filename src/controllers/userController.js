@@ -4,18 +4,17 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createToken } = require('../middlewares/authentication/auth');
 const emailModule = require('../utils/email');
+const { isNullOrUndefinedOrEmpty } = require('../utils/helpers/valueHelper');
 
 const getUsers = (req, res) => {
-
-
     client.execute(query.getUsers, (err, result) => {
         if (err) {
             console.log(err);
+            res.status(500).json({ err });
         }
         else {
             res.status(200).json({ data: result.rows })
         }
-
     })
 }
 
@@ -34,6 +33,7 @@ const register = (req, res) => {
                 const hashedPassword = bcrypt.hashSync(password, 10);
                 client.execute(query.addUser, [firstname, lastname, email, hashedPassword, verifyCode], (err, result) => {
                     if (err) {
+                        res.status(500).json({ success: false, message: "server error" });
                         console.log(err);
                     }
                     else {
@@ -104,22 +104,55 @@ const login = (req, res) => {
 }
 
 const update = async (req, res) => {
-    const { firstname, lastname } = req.body;
+    let { firstname, lastname, currentPassword, newPassword, newPasswordAgain } = req.body;
     const token = req.headers.authorization.split(' ')[1];
     const verifyedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
     const userId = verifyedToken.sub.userId
     console.log('userId :', userId);
 
-    await client.execute(query.updateUser, [firstname, lastname, userId], (err, result) => {
+    client.execute(query.getUserById, [userId], async (err, result) => {
         if (err) {
-            res.status(400).json({ success: false, message: "query error" });
-            console.log('query error: ', err);
+            res.status(500).json({ success: true, message: "server error" });
         }
-        else {
-            res.status(200).json({ success: true, data: [firstname, lastname], message: 'user updated successfully' });
-        }
-    })
 
+        if (isNullOrUndefinedOrEmpty(firstname)) {
+            console.log("null or undefined or empty", firstname, "type", typeof firstname)
+            firstname = result.rows[0].firstname;
+        }
+
+        if (isNullOrUndefinedOrEmpty(lastname)) {
+            console.log("null or undefined or empty", lastname, "type", typeof lastname)
+            lastname = result.rows[0].lastname;
+        }
+
+        const comparePassword = bcrypt.compareSync(currentPassword, result?.rows[0]?.password)
+        if (isNullOrUndefinedOrEmpty(currentPassword) || !comparePassword) {
+            res.status(400).json({ success: false, message: "password is wrong" })
+        }
+
+        let password = "";
+        if (newPassword != newPasswordAgain) res.status(400).json({ success: false, message: "We could be the same No matter what they say" })
+        else if (!isNullOrUndefinedOrEmpty(newPassword)) {
+
+            const passwordIsSame = bcrypt.compareSync(newPassword, result?.rows[0]?.password)
+            if (passwordIsSame) res.status(400).json({ success: false, message: "Your password cannot be the same as the previous one" })
+            else {
+
+                password = isNullOrUndefinedOrEmpty(newPassword) && isNullOrUndefinedOrEmpty(newPasswordAgain)
+                    ? bcrypt.hashSync(currentPassword, 10) : bcrypt.hashSync(newPassword, 10);
+
+            }
+        } else {
+            password = bcrypt.hashSync(currentPassword, 10);
+        }
+        console.log("değerler : ", firstname, lastname, password, userId)
+        client.execute(query.updateUser, [firstname, lastname, password, userId], (err, result) => {
+            if (err) res.status(400).json({ success: false, message: "server error" });
+            res.status(200).json({ success: true, message: "user updated sucessfully" })
+        })
+
+
+    })
 }
 
 const deleteUser = (req, res) => {
@@ -137,7 +170,7 @@ const deleteUser = (req, res) => {
             else {
                 const comparedPassword = bcrypt.compareSync(password, result?.rows[0]?.password)
                 if (!comparedPassword) {
-                    res.status(401).json({ success: false, message: "password is wrong" });
+                    res.status(400).json({ success: false, message: "password is wrong" });
                 } else {
                     client.execute(query.deleteUser, [userId], (err, result) => {
                         if (err) {
@@ -217,20 +250,32 @@ const iForgotMyPassword = (req, res) => {
 
 const resetPassword = (req, res) => {
     const { id, password, passwordAgain } = req.body;
+    if (isNullOrUndefinedOrEmpty(password || passwordAgain))
+        res.status(400).json({ success: false, message: "These fields cannot be left blank" })
+
     if (password != passwordAgain) {
-        res.status(401).json({ success: false, message: "We could be the same No matter what they say" });
-    } else {
+        res.status(400).json({ success: false, message: "We could be the same No matter what they say" });
+    }
+    client.execute(query.getUserById, [id], (err, result) => {
+        if (err) res.status(400).json({ success: false, message: "server error" });
+
+        const passwordIsSame = bcrypt.compareSync(password, result?.rows[0]?.password)
+        if (passwordIsSame) {
+            res.status(400).json({ success: false, message: "Your password cannot be the same as the previous one" });
+        }
         const hashedPassword = bcrypt.hashSync(password, 10);
         console.log(hashedPassword);
         client.execute(query.resetPassword, [hashedPassword, id], (err, result) => {
             if (err) {
                 res.status(500).json({ success: false, message: "server error" });
-            } else {
-                res.status(200).json({ success: true, message: "Your password has been changed successfully" })
             }
+            res.status(200).json({ success: true, message: "Your password has been changed successfully" })
 
         })
-    }
+
+
+    })
+
 
 }
 
