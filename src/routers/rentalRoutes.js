@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const rentalInfo = require('../controllers/rentalInfoController');
+const rental = require('../controllers/rentalController');
 
-router.get('/getRentalInfo', rentalInfo.getRentalinfo);
-
+router.get('/getRentalInfo', rental.getRentalsInfo);
+router.post('/addResultOfRental', rental.addResultOfRental);
 
 module.exports = router;
