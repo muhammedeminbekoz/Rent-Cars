@@ -6,14 +6,22 @@ const { createToken } = require('../middlewares/authentication/auth');
 const emailModule = require('../utils/email');
 const { isNullOrUndefinedOrEmpty } = require('../utils/helpers/valueHelper');
 
-const getUsers = (req, res) => {
-    client.execute(query.getUsers, (err, result) => {
+const getUserById = (req, res) => {
+    const { userId } = req.body;
+    client.execute(query.getUserById, [userId], (err, result) => {
         if (err) {
-            console.log(err);
-            res.status(500).json({ err });
+            res.status(500).json({ success: false, message: "server error" });
         }
         else {
-            res.status(200).json({ data: result.rows })
+            const userData = result?.rows[0];
+
+            res.status(200).json({
+                success: true, data: {
+                    id: userData.id,
+                    firstname: userData.firstname,
+                    lastname: userData.lastname
+                }
+            })
         }
     })
 }
@@ -280,7 +288,7 @@ const resetPassword = (req, res) => {
 }
 
 module.exports = {
-    getUsers,
+    getUserById,
     register,
     login,
     update,
