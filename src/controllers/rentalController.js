@@ -37,11 +37,18 @@ const addResultOfRental = (req, res) => {
             if (err) {
                 console.log(err)
                 res.status(500).json({ success: false, message: "server error" });
+                return result.rows[0];
             }
-            res.status(200).json({ success: true, data: result })
+
+            client.execute(query.changeCarInfos, [false, dropoffOfficeId, carId], { prepare: true }, (err, result) => {
+                if (err) res.status(500).json({ success: false, message: "server error" });
+            })
+
+            res.status(200).json({ success: true })
 
         }
     )
+
 }
 
 
