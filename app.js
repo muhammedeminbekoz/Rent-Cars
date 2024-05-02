@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-const port = process.env.PORT || 1903;
+const port = process.env.PORT || 3000;
 
 
 const userRoutes = require('./src/routers/userRoutes');
@@ -23,6 +23,6 @@ app.use('/api/rental', rentalRoutes);
 
 
 app.listen(port, () => {
-    console.log(`http://localhost:3000 is running`);
+    console.log(`http://localhost:${process.env.PORT} is running`);
 })
 
