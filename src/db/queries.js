@@ -28,15 +28,18 @@ const getCityIds = 'SELECT city_name,city_id FROM cities';
 8a03-3d5dec871f53; */
 
 const addOffice = 'INSERT into offices (office_id, city_id, office_name) VALUES (uuid(), ?, ?)'
-const listOfficeByCity = 'SELECT * FROM  offices WHERE city_id = ? ALLOW FILTERING';
+const getOffices = 'SELECT * FROM  offices';
 
 const getOfficeId = 'SELECT office_id FROM offices WHERE office_name = ? ALLOW FILTERING'
+const getOfficeById = 'SELECT * FROM offices WHERE office_id = ?'
 const listCars = 'SELECT * FROM cars WHERE rental_status = True AND office_id = ? ALLOW FILTERING'
-
-
+const changeCarInfos = 'UPDATE cars SET rental_status = ? , office_id = ? WHERE car_id = ?';
+const changeRentalStatus = 'UPDATE cars SET rental_status = ? WHERE car_id = ?';
 
 const getRentalInfo = 'SELECT * FROM rentalinfo';
-const addDrivingLicance = 'INSERT INTO rentalinfo (rental_id, driving_licance) VALUES (uuid(), {firstname : ? , lastname : ? , starting_date : ? , ending_date : null , licance_no : ? , tck_no : ? , dob : null })'
+const addResultOfRental = 'INSERT INTO rentalinfo (rental_id, car_id, driving_licance, dropoff_date, dropoff_officeid, phone_number, pickup_date, pickup_officeid, user_id) VALUES (uuid(), ?, {firstname : ? , lastname : ? , starting_date : ? , ending_date : ? , licance_no : ? , tck_no : ? , dob : ? }, ?, ?, ?, ?, ?, ? )'
+
+//const addResultOfRental = 'INSERT INTO rentalinfo (rental_id, car_id, driving_licance, dropoff_date, dropoff_officeid, phone_number, pickup_date, pickup_officeid, user_id) VALUES (uuid(), ?,{firstname: ?, lastname : ?, starting_date: null, ending_date : null, licance_no : ?, tck_no : ?, dob : null }, null, ?, ?, null, ?, null)'
 
 
 // truncate table rentalinfo; komutunu kullanarak bir tablo içerisindeki tüm kayıtları silebiliriz.
@@ -74,10 +77,13 @@ module.exports = {
     getCityId,
     getCityIds,
     addOffice,
-    listOfficeByCity,
+    getOffices,
     getOfficeId,
+    getOfficeById,
     listCars,
+    changeCarInfos,
+    changeRentalStatus,
     getRentalInfo,
-    addDrivingLicance
+    addResultOfRental
 
 }
