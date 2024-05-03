@@ -29,10 +29,12 @@ const getCityIds = 'SELECT city_name,city_id FROM cities';
 
 const addOffice = 'INSERT into offices (office_id, city_id, office_name) VALUES (uuid(), ?, ?)'
 const getOffices = 'SELECT * FROM  offices';
-
 const getOfficeId = 'SELECT office_id FROM offices WHERE office_name = ? ALLOW FILTERING'
 const getOfficeById = 'SELECT * FROM offices WHERE office_id = ?'
+
 const listCars = 'SELECT * FROM cars WHERE rental_status = True AND office_id = ? ALLOW FILTERING'
+const addCar = 'INSERT INTO cars (car_id, brand,car_image, fuel_type, gear_type, rental_status, office_id,rental_price) VALUES (uuid(), ?, ?, ?, ?, ?, ?, ?)';
+
 const changeCarInfos = 'UPDATE cars SET rental_status = ? , office_id = ? WHERE car_id = ?';
 const changeRentalStatus = 'UPDATE cars SET rental_status = ? WHERE car_id = ?';
 
@@ -74,6 +76,7 @@ module.exports = {
     deleteUser,
     resetPassword,
     listCity,
+    addCar,
     getCityId,
     getCityIds,
     addOffice,
