@@ -6,7 +6,7 @@ const carsController = require('../controllers/carsController');
 router.get('/listcity/:cityname', cityController.listCity);
 router.post('/addOffice', officeController.addOffice);
 router.get('/offices', officeController.listOffices);
-router.get('/cars/:officename', carsController.listCarsByOffice);
+
 
 
 
