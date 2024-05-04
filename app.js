@@ -1,7 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
-
+const cors = require('cors');
 
 const userRoutes = require('./src/routers/userRoutes');
 const cityRoutes = require('./src/routers/cityRoutes');
@@ -12,6 +12,7 @@ const carsRoutes = require('./src/routers/carsRoutes');
 const app = express();
 app.use(express.json());
 
+app.use(cors());
 
 app.get('/', async (req, res) => {
     res.status(200).json('Hello World!');
