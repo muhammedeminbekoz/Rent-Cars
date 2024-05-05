@@ -8,6 +8,7 @@ router.post('/register', registerValidation, userController.register);
 router.post('/login', loginValidation, userController.login);
 router.put('/update', authorization.tokenCheck, updateValidation, userController.update);
 router.post('/verifyEmail', verifyValidation, userController.verifyUser);
+router.post('/sendEmailAgain', userController.sendEmailAgain);
 router.delete('/deleteUser', userController.deleteUser);
 router.get('/iForgotMyPassword', userController.iForgotMyPassword);
 router.post('/resetPassword', userController.resetPassword);
