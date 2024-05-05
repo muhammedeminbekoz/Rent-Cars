@@ -111,10 +111,11 @@ const login = (req, res) => {
 
 }
 
-const update = async (req, res) => {
+const update = (req, res) => {
     let { firstname, lastname, currentPassword, newPassword, newPasswordAgain } = req.body;
-    const token = req.headers.authorization.split(' ')[1];
-    const verifyedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const token = req?.headers?.authorization?.split(' ')[1];
+    const verifyedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("salammmmmmmmmmm: ", verifyedToken);
     const userId = verifyedToken.sub.userId
     console.log('userId :', userId);
 
@@ -239,6 +240,41 @@ const verifyUser = (req, res) => {
     })
 }
 
+const sendEmailAgain = (req, res) => {
+    try {
+        const { email } = req.body;
+
+        client.execute(query.checkUserExsist, [email], (err, result) => {
+            if (err) res.status(400).json({ success: false, message: "server error ", error: err });
+            else if (!result?.rows[0]?.email) {
+                res.status(404).json({ success: false, message: "User not found, If you don't have an account, please register" })
+            }
+            else {
+                client.execute('SELECT id FROM users WHERE email = ? ALLOW FILTERING', [email], (err, result) => {
+                    if (err) res.status(400).json({ success: false, message: "server error ", error: err });
+
+                    const userId = result?.rows[0]?.id;
+                    emailModule.sendVerificationEmail(email);
+                    const verifyCode = emailModule?.verifyCode?.toString();
+
+                    client.execute('UPDATE users SET verifycode = ? WHERE id = ?', [verifyCode, userId], (err, result) => {
+                        if (err) res.status(400).json({ success: false, message: "server error", error: err });
+
+                        res.status(200).json({ success: true, message: "email sended successfully" })
+
+                    })
+                })
+            }
+
+        })
+
+
+    } catch (err) {
+        console.log("mail gönderimi sırasında bir hata olşutu lütfen tekrar deneyin", err)
+        res.status(400).json({ success: false, message: "An error occurred while sending the e-mail, please try again." })
+    }
+}
+
 const iForgotMyPassword = (req, res) => {
     const { email } = req.body;
     client.execute(query.checkUserExsist, [email], (err, result) => {
@@ -294,6 +330,7 @@ module.exports = {
     update,
     deleteUser,
     verifyUser,
+    sendEmailAgain,
     iForgotMyPassword,
     resetPassword
 };
