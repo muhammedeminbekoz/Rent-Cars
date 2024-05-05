@@ -4,6 +4,7 @@ const addUser = 'INSERT INTO users (id, firstname, lastname, email ,password, ve
 const checkUserExsist = 'SELECT id, email, password FROM users WHERE email = ? ALLOW FILTERING'
 const updateUser = 'UPDATE users SET firstname = ?, lastname = ?, password= ? WHERE id = ?'
 const verifyUser = 'SELECT id, verifycode from users WHERE email = ? ALLOW FILTERING';
+const updateUserVerifycode = 'UPDATE users SET verifycode = ? WHERE id = ?';
 const chechkUserisVerifyed = 'SELECT * from users WHERE email = ? ALLOW FILTERING';
 const getUserPassword = 'SELECT password from users WHERE id = ?';
 const deleteUser = 'DELETE FROM users WHERE id = ?';
@@ -71,6 +72,7 @@ module.exports = {
     checkUserExsist,
     updateUser,
     verifyUser,
+    updateUserVerifycode,
     chechkUserisVerifyed,
     getUserPassword,
     deleteUser,
