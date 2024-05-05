@@ -250,17 +250,16 @@ const sendEmailAgain = (req, res) => {
                 res.status(404).json({ success: false, message: "User not found, If you don't have an account, please register" })
             }
             else {
-                client.execute('SELECT id FROM users WHERE email = ? ALLOW FILTERING', [email], (err, result) => {
+                client.execute('SELECT id FROM users WHERE email = ? ALLOW FILTERING', [email], async (err, result) => {
                     if (err) res.status(400).json({ success: false, message: "server error ", error: err });
 
                     const userId = result?.rows[0]?.id;
-                    emailModule.sendVerificationEmail(email);
-                    const verifyCode = emailModule?.verifyCode?.toString();
+                    const verifyCode = emailModule.sendVerificationEmail(email)?.toString();
 
                     client.execute('UPDATE users SET verifycode = ? WHERE id = ?', [verifyCode, userId], (err, result) => {
                         if (err) res.status(400).json({ success: false, message: "server error", error: err });
 
-                        res.status(200).json({ success: true, message: "email sended successfully" })
+                        res.status(200).json({ success: true, message: "email sended successfully", data: verifyCode })
 
                     })
                 })
