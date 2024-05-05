@@ -3,7 +3,7 @@ require('dotenv').config();
 
 
 
-const verifyCode = Math.floor(Math.random() * 900000) + 100000;
+let verifyCode;
 
 const verificationEmailTemplate = () => {
     return `
@@ -77,23 +77,6 @@ const verificationEmailTemplate = () => {
     </html>
         
     `
-
-
-
-
-
-        /*  <h1>Mail Authentication</h1>
-             <h2>Authentication code: ${authanticationCode} </h2>
-             
-             
-             
-             
-             
-             
-             
-             
-             */
-        ;
 };
 
 
@@ -151,6 +134,7 @@ const selectVerificationMailOptions = (to) => {
 
 const sendVerificationEmail = (to) => {
     console.log('mail gönderimi başladı');
+    verifyCode = Math.floor(Math.random() * 900000) + 100000;
     transporter.sendMail(selectVerificationMailOptions(to), (err, data) => {
         if (err) console.log(err);
         else {
@@ -162,6 +146,7 @@ const sendVerificationEmail = (to) => {
 
 const sendResetPasswordEmail = (to) => {
     console.log('mail gönderimi başladı');
+    verifyCode = Math.floor(Math.random() * 900000) + 100000;
     transporter.sendMail(selectResetPasswordMailOptions(to), (err, data) => {
         if (err) console.log(err);
         else {
