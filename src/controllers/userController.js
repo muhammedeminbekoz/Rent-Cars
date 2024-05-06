@@ -31,7 +31,7 @@ const register = (req, res) => {
     const { firstname, lastname, email, password } = req.body;
 
     client.execute(query.checkUserExsist, [email], (err, result) => {
-        const verifyCode = emailModule.verifyCode.toString();
+        const verifyCode = emailModule.sendVerificationEmail(email)?.toString();
         console.log(verifyCode);
         if (err) console.log(err);
         else {
@@ -200,44 +200,66 @@ const deleteUser = (req, res) => {
 const verifyUser = (req, res) => {
     const { email, userVerifyCode } = req.body;
 
-    client.execute(query.verifyUser, [email], (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ success: false, message: "server error" });
-        }
-        else {
-            const userId = result.rows[0].id;
-            console.log(userId);
+    try {
 
-            client.execute(`SELECT verifycode from users WHERE id = ?`, [userId], (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).json({ success: false, message: "server error" });
-                }
-                else {
-                    const verifyCode = result?.rows[0]?.verifycode;
-                    console.log(verifyCode);
-                    console.log(userVerifyCode);
-                    if (userVerifyCode === verifyCode) {
-                        client.execute('UPDATE users SET isverify = true WHERE id = ?', [userId], (err, result) => {
+        client.execute(query.checkUserExsist, [email], (err, result) => {
+            if (err) {
+                res.status(400).json({ success: false, meessage: "server error" })
+            }
+
+            else if (!result?.rows[0]?.email) {
+                res.status(404).json({ success: false, message: "user not found" })
+            }
+
+            else {
+
+                client.execute(query.verifyUser, [email], (err, result) => {
+                    if (err) {
+                        console.log("server error 1", err);
+                        res.status(500).json({ success: false, message: "server error" });
+                    }
+                    else {
+                        console.log("burda")
+                        const userId = result?.rows[0]?.id;
+                        console.log(userId)
+
+                        client.execute(`SELECT verifycode from users WHERE id = ?`, [userId], (err, result) => {
                             if (err) {
                                 console.log(err);
                                 res.status(500).json({ success: false, message: "server error" });
                             }
                             else {
-                                res.status(200).json({ success: true, messsage: "verification successful" });
+                                const verifyCode = result?.rows[0]?.verifycode;
+                                console.log(verifyCode);
+                                console.log(userVerifyCode);
+                                if (userVerifyCode === verifyCode) {
+                                    client.execute('UPDATE users SET isverify = true WHERE id = ?', [userId], (err, result) => {
+                                        if (err) {
+                                            console.log(err);
+                                            res.status(500).json({ success: false, message: "server error" });
+                                        }
+                                        else {
+                                            res.status(200).json({ success: true, messsage: "verification successful" });
+                                        }
+                                    })
+                                }
+                                else {
+                                    res.status(400).json({ success: false, message: "verify code is wrong!" });
+                                }
                             }
                         })
-                    }
-                    else {
-                        res.status(400).json({ success: false, message: "verify code is wrong!" });
-                    }
-                }
-            })
 
 
-        }
-    })
+                    }
+                })
+            }
+        })
+    }
+    catch (err) {
+        res.status(404).json({ success: false, message: "user not found catch" })
+    }
+
+
 }
 
 const sendEmailAgain = (req, res) => {
