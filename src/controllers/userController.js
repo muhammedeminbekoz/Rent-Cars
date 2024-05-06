@@ -7,7 +7,9 @@ const emailModule = require('../utils/email');
 const { isNullOrUndefinedOrEmpty } = require('../utils/helpers/valueHelper');
 
 const getUserById = (req, res) => {
-    const { userId } = req.body;
+    const token = req?.headers?.authorization?.split(' ')[1];
+    const verifyedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userId = verifyedToken.sub.userId;
     client.execute(query.getUserById, [userId], (err, result) => {
         if (err) {
             res.status(500).json({ success: false, message: "server error" });
@@ -17,9 +19,9 @@ const getUserById = (req, res) => {
 
             res.status(200).json({
                 success: true, data: {
-                    id: userData.id,
                     firstname: userData.firstname,
-                    lastname: userData.lastname
+                    lastname: userData.lastname,
+                    email: userData.email
                 }
             })
         }
