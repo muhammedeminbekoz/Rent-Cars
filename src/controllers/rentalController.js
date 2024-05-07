@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const { isNullOrUndefinedOrEmpty } = require('../utils/helpers/valueHelper');
 moment().format();
-const cron = require('cron')
+
 
 
 const getRentalsInfo = (req, res) => {
