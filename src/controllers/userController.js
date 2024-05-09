@@ -29,41 +29,38 @@ const getUserById = (req, res) => {
 }
 
 const register = (req, res) => {
-    console.log('registiration started')
     const { firstname, lastname, email, password } = req.body;
 
     client.execute(query.checkUserExsist, [email], (err, result) => {
-        const verifyCode = emailModule.sendVerificationEmail(email)?.toString();
-        console.log(verifyCode);
-        if (err) console.log(err);
-        else {
-            if (result.rowLength) {
-                res.status(409).json({ message: 'user already exist' })
-            } else {
-                const hashedPassword = bcrypt.hashSync(password, 10);
-                client.execute(query.addUser, [firstname, lastname, email, hashedPassword, verifyCode], (err, result) => {
-                    if (err) {
-                        res.status(500).json({ success: false, message: "server error" });
-                        console.log(err);
-                    }
-                    else {
-                        emailModule.sendVerificationEmail(email);
-                        console.log('isim:' + firstname, 'email:' + email)
-                        res.status(200).json({
-                            message: 'User added successfully', data: [
-                                firstname,
-                                lastname,
-                                email,
-                            ]
-
-
-                        });
-                    }
-                })
-            }
+        if (err) {
+            console.log(err);
+            res.status(400).json({ success: false, message: "server error" })
         }
+        else if (result.rowLength) {
+            res.status(409).json({ message: 'user already exist' })
+        }
+        else {
+            const verifyCode = emailModule.sendVerificationEmail(email)?.toString();
+            const hashedPassword = bcrypt.hashSync(password, 10);
+            client.execute(query.addUser, [firstname, lastname, email, hashedPassword, verifyCode], (err, result) => {
+                if (err) {
+                    res.status(500).json({ success: false, message: "server error" });
+                    console.log(err);
+                }
+                else {
+                    console.log('isim:' + firstname, 'email:' + email)
+                    res.status(200).json({
+                        message: 'User added successfully', data: {
+                            firstname,
+                            lastname,
+                            email,
+                        }
+                    });
+                }
+            })
+        }
+
     })
-    console.log('registiration tamamlandı')
 }
 
 const login = (req, res) => {
@@ -76,7 +73,7 @@ const login = (req, res) => {
         else {
             if (!result.rowLength) {
                 console.log('email or password is wrong')
-                res.status(400).json({ message: 'email or password is wrong' })
+                res.status(400).json({ message: 'user not exsist' })
             } else {
                 client.execute(query.chechkUserisVerifyed, [email], (err, result) => {
                     if (err) {
