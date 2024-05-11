@@ -134,26 +134,22 @@ const selectVerificationMailOptions = (to) => {
 
 const sendVerificationEmail = (to) => {
     verifyCode = Math.floor(Math.random() * 900000) + 100000;
-    console.log('mail gönderimi başladı');
     transporter.sendMail(selectVerificationMailOptions(to), (err, data) => {
         if (err) console.log(err);
         else {
             console.log('mail gönderildi', verifyCode);
         }
     })
-    console.log('mail gönderimi tamalandı');
     return verifyCode;
 }
 
 const sendResetPasswordEmail = (to) => {
-    console.log('mail gönderimi başladı');
     transporter.sendMail(selectResetPasswordMailOptions(to), (err, data) => {
         if (err) console.log(err);
         else {
             console.log('mail gönderildi');
         }
     })
-    console.log('mail gönderimi tamalandı');
 }
 
 

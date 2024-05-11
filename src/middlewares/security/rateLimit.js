@@ -4,7 +4,6 @@ const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: (req, res) => {
-        console.log(req.url);
         if (req.url == '/user/login') {
             return 3;
         }

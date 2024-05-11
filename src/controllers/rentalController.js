@@ -10,11 +10,10 @@ moment().format();
 const getRentalsInfo = (req, res) => {
     client.execute(query.getRentalInfo, (err, result) => {
         if (err) {
-            console.log(err, 'query error');
+            res.status(500).json({ success: false, message: "server error" });
         }
         else {
             res.status(400).json({ success: true, dropoffDate: result?.rows });
-
         }
     })
 }

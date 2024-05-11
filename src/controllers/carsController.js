@@ -6,28 +6,23 @@ const nodecron = require('node-cron')
 
 const listCarsByOffice = (req, res) => {
     const officeName = req.params.officename;
-
     client.execute(query.getOfficeId, [officeName], (err, result) => {
         if (err) {
-            console.log(err);
             res.status(500).json({ success: false, message: "query error" })
 
         } else {
             const officeId = result?.rows[0]?.office_id;
 
             if (!officeId) {
-                console.log('böyle bir ofis yok');
                 res.status(400).json({ message: 'böyle bir ofis bulunmamaktadır' });
             }
             else {
-                console.log(officeId)
                 client.execute(query.listCars, [officeId], (err, result) => {
-                    if (err) console.log(err);
+                    if (err) res.status(400).json({ success: false, message: "server error" });
                     else {
                         if (!result.rowLength) {
                             res.status(200).json({ message: 'ofiste kiralamaya uygun araç bulunmamaktadır' });
                         }
-
                         res.status(200).json({ data: result.rows })
                     }
                 });
@@ -45,7 +40,6 @@ const addCar = (req, res) => {
 
     client.execute(query.addCar, [brand, carImage, fuelType, gearType, rentalStatus, officeId, rentalPrice], { prepare: true }, (err, result) => {
         if (err) {
-            console.log(err);
             res.status(400).json({ success: false, message: 'server eror' });
         }
         else {
@@ -69,7 +63,7 @@ const changeCarStatus = (req, res) => {
                     rentedCarsDate.push(value.last_dropoff_date)
                 })
 
-                nodecron.schedule('* * * * * *', () => { // Her 30 dakikada bir çalışacak şekilde ayarlandı,
+                nodecron.schedule('*/30 * * * *', () => { // Her 30 dakikada bir çalışacak şekilde ayarlandı,
                     const today = new Date();
 
                     rentedCarsDate.forEach((dropoffDate) => {
@@ -99,7 +93,6 @@ const changeCarStatus = (req, res) => {
         })
     }
     catch (err) {
-        console.log(err)
         res.status(400).json({ success: false, message: "server error" })
     }
 

@@ -33,7 +33,6 @@ const register = (req, res) => {
 
     client.execute(query.checkUserExsist, [email], (err, result) => {
         if (err) {
-            console.log(err);
             res.status(400).json({ success: false, message: "server error" })
         }
         else if (result.rowLength) {
@@ -45,10 +44,8 @@ const register = (req, res) => {
             client.execute(query.addUser, [firstname, lastname, email, hashedPassword, verifyCode], (err, result) => {
                 if (err) {
                     res.status(500).json({ success: false, message: "server error" });
-                    console.log(err);
                 }
                 else {
-                    console.log('isim:' + firstname, 'email:' + email)
                     res.status(200).json({
                         message: 'User added successfully', data: {
                             firstname,
@@ -68,16 +65,14 @@ const login = (req, res) => {
 
     client.execute(query.checkUserExsist, [email], (err, result) => {
         if (err) {
-            console.log('query error', err);
+            res.status(500).json({ success: false, message: "server error" });
         }
         else {
             if (!result.rowLength) {
-                console.log('email or password is wrong')
                 res.status(400).json({ message: 'user not exsist' })
             } else {
                 client.execute(query.chechkUserisVerifyed, [email], (err, result) => {
                     if (err) {
-                        console.log(err);
                         res.status(500).json({ success: false, message: "server error" });
                     }
                     else {
@@ -86,23 +81,15 @@ const login = (req, res) => {
                         }
                         else {
                             const hashedPassword = bcrypt.compareSync(password, result.rows[0].password);
-                            console.log("hashed password :   ", hashedPassword);
                             if (hashedPassword) {
                                 const jwtToken = createToken(result.rows[0].id);
-                                console.log('user login with email', result.rows[0]);
                                 res.status(200).json({ message: 'login succesful', token: jwtToken });
                             } else {
-                                console.log('email or password is wrong')
                                 res.status(400).json({ message: 'email or password is wrong' });
                             }
                         }
                     }
                 })
-
-
-
-
-
             }
         }
     })
@@ -114,9 +101,7 @@ const update = (req, res) => {
     let { firstname, lastname, currentPassword, newPassword, newPasswordAgain } = req.body;
     const token = req?.headers?.authorization?.split(' ')[1];
     const verifyedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("salammmmmmmmmmm: ", verifyedToken);
     const userId = verifyedToken.sub.userId
-    console.log('userId :', userId);
 
     client.execute(query.getUserById, [userId], async (err, result) => {
         if (err) {
@@ -124,12 +109,10 @@ const update = (req, res) => {
         }
 
         if (isNullOrUndefinedOrEmpty(firstname)) {
-            console.log("null or undefined or empty", firstname, "type", typeof firstname)
             firstname = result.rows[0].firstname;
         }
 
         if (isNullOrUndefinedOrEmpty(lastname)) {
-            console.log("null or undefined or empty", lastname, "type", typeof lastname)
             lastname = result.rows[0].lastname;
         }
 
@@ -153,7 +136,6 @@ const update = (req, res) => {
         } else {
             password = bcrypt.hashSync(currentPassword, 10);
         }
-        console.log("değerler : ", firstname, lastname, password, userId)
         client.execute(query.updateUser, [firstname, lastname, password, userId], (err, result) => {
             if (err) res.status(400).json({ success: false, message: "server error" });
             res.status(200).json({ success: true, message: "user updated sucessfully" })
@@ -168,7 +150,6 @@ const deleteUser = (req, res) => {
 
     client.execute(query.getUserPassword, [userId], (err, result) => {
         if (err) {
-            console.log(err);
             res.status(500).json({ success: false, message: "server error" });
         }
         else {
@@ -182,7 +163,6 @@ const deleteUser = (req, res) => {
                 } else {
                     client.execute(query.deleteUser, [userId], (err, result) => {
                         if (err) {
-                            console.log(err);
                             res.status(500).json({ success: false, message: "server error" });
                         } else {
                             res.status(200).json({ success: true, message: "user deleted successfully" });
@@ -214,27 +194,20 @@ const verifyUser = (req, res) => {
 
                 client.execute(query.verifyUser, [email], (err, result) => {
                     if (err) {
-                        console.log("server error 1", err);
                         res.status(500).json({ success: false, message: "server error" });
                     }
                     else {
-                        console.log("burda")
                         const userId = result?.rows[0]?.id;
-                        console.log(userId)
 
                         client.execute(`SELECT verifycode from users WHERE id = ?`, [userId], (err, result) => {
                             if (err) {
-                                console.log(err);
                                 res.status(500).json({ success: false, message: "server error" });
                             }
                             else {
                                 const verifyCode = result?.rows[0]?.verifycode;
-                                console.log(verifyCode);
-                                console.log(userVerifyCode);
                                 if (userVerifyCode === verifyCode) {
                                     client.execute('UPDATE users SET isverify = true WHERE id = ?', [userId], (err, result) => {
                                         if (err) {
-                                            console.log(err);
                                             res.status(500).json({ success: false, message: "server error" });
                                         }
                                         else {
@@ -290,7 +263,6 @@ const sendEmailAgain = (req, res) => {
 
 
     } catch (err) {
-        console.log("mail gönderimi sırasında bir hata olşutu lütfen tekrar deneyin", err)
         res.status(400).json({ success: false, message: "An error occurred while sending the e-mail, please try again." })
     }
 }
@@ -330,7 +302,6 @@ const resetPassword = (req, res) => {
                 }
                 else {
                     const hashedPassword = bcrypt.hashSync(password, 10);
-                    console.log(hashedPassword);
                     client.execute(query.resetPassword, [hashedPassword, id], (err, result) => {
                         if (err) {
                             res.status(500).json({ success: false, message: "server error" });

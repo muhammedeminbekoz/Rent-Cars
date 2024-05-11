@@ -9,11 +9,9 @@ const addOffice = async (req, res) => {
 
     const result = await client.execute(query.getCityId, [city_name]);
     const cityId = result.rows[0].city_id;
-    console.log(cityId);
-
 
     await client.execute(query.addOffice, [cityId, office_name], (err, result) => {
-        if (err) console.log(err);
+        if (err) res.status(400).json({ success: false, message: 'server error' });
         else {
             res.status(200).json({ message: 'office added successfully' });
         }
@@ -25,8 +23,7 @@ const listOffices = async (req, res) => {
     // const cityName = req.params.cityname;
     client.execute(query.getOffices, async (err, result) => {
         if (err) {
-            res.status(500).json({ success: false, message: "server error" })
-            console.log(err);
+            res.status(400).json({ success: false, message: "server error" })
         }
 
         else {

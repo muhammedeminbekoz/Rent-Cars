@@ -2,7 +2,6 @@ const joi = require('joi');
 
 
 const registerValidation = (req, res, next) => {
-    console.log('validation started');
     const registerSchema = joi.object({
         firstname: joi.string().trim().min(3).max(30).required().messages({
             "string.base": "isim alanı normal metin olmalıdır",
@@ -37,11 +36,9 @@ const registerValidation = (req, res, next) => {
         })
     }).validate(req.body)
     if (registerSchema.error) {
-        console.log(registerSchema.error.message);
         return res.status(400).json(registerSchema.error)
     }
     else {
-        console.log('validation successfull');
         next()
     }
     ;
@@ -69,10 +66,8 @@ const loginValidation = (req, res, next) => {
         })
     }).validate(req.body);
     if (loginSchema.error) {
-        console.log(loginSchema.error.message);
         return res.status(400).json(loginSchema.error);
     } else {
-        console.log('validation successful');
         next();
     }
 }
@@ -108,16 +103,13 @@ const updateValidation = (req, res, next) => {
         })
     }).validate(req.body);
     if (updateSchema.error) {
-        console.log(updateSchema.error.message);
         return res.status(400).json(updateSchema.error)
     } else {
-        console.log('validation successfull');
         next();
     }
 }
 
 const verifyValidation = (req, res, next) => {
-    console.log('validation started');
     const verifySchema = joi.object({
         email: joi.string().trim().empty().email().required().messages({
             "string.base": "email alanı metin olmalıdır",
@@ -138,14 +130,11 @@ const verifyValidation = (req, res, next) => {
         })
     }).validate(req.body);
     if (verifySchema.error) {
-        console.log(verifySchema.error.message);
         return res.status(400).json(verifySchema.error);
 
     } else {
-        console.log("validation successful");
         next();
     }
-    console.log("next");
 }
 
 module.exports = {
