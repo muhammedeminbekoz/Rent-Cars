@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const carsController = require('../controllers/carsController');
 
-router.post('/addCar', carsController.addCar);
-router.get('/changeCarStatus', carsController.changeCarStatus);
-router.get('/listcars/:officename', carsController.listCarsByOffice);
+router.post('/add-car', carsController.addCar);
+router.get('/change-car-status', carsController.changeCarStatus);
+router.get('/list-cars/:officename', carsController.listCarsByOffice);
 
 
 module.exports = router;
