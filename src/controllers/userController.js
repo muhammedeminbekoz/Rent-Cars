@@ -314,32 +314,34 @@ const iForgotMyPassword = (req, res) => {
 
 const resetPassword = (req, res) => {
     const { id, password, passwordAgain } = req.body;
-    if (isNullOrUndefinedOrEmpty(password || passwordAgain))
+    if (isNullOrUndefinedOrEmpty(password || passwordAgain)) {
         res.status(400).json({ success: false, message: "These fields cannot be left blank" })
-
-    if (password != passwordAgain) {
+    }
+    else if (password != passwordAgain) {
         res.status(400).json({ success: false, message: "We could be the same No matter what they say" });
     }
-    client.execute(query.getUserById, [id], (err, result) => {
-        if (err) res.status(400).json({ success: false, message: "server error" });
+    else {
+        client.execute(query.getUserById, [id], (err, result) => {
+            if (err) res.status(400).json({ success: false, message: "server error" });
+            else {
+                const passwordIsSame = bcrypt.compareSync(password, result?.rows[0]?.password)
+                if (passwordIsSame) {
+                    res.status(400).json({ success: false, message: "Your password cannot be the same as the previous one" });
+                }
+                else {
+                    const hashedPassword = bcrypt.hashSync(password, 10);
+                    console.log(hashedPassword);
+                    client.execute(query.resetPassword, [hashedPassword, id], (err, result) => {
+                        if (err) {
+                            res.status(500).json({ success: false, message: "server error" });
+                        }
+                        res.status(200).json({ success: true, message: "Your password has been changed successfully" })
 
-        const passwordIsSame = bcrypt.compareSync(password, result?.rows[0]?.password)
-        if (passwordIsSame) {
-            res.status(400).json({ success: false, message: "Your password cannot be the same as the previous one" });
-        }
-        const hashedPassword = bcrypt.hashSync(password, 10);
-        console.log(hashedPassword);
-        client.execute(query.resetPassword, [hashedPassword, id], (err, result) => {
-            if (err) {
-                res.status(500).json({ success: false, message: "server error" });
+                    })
+                }
             }
-            res.status(200).json({ success: true, message: "Your password has been changed successfully" })
-
         })
-
-
-    })
-
+    }
 
 }
 
