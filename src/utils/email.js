@@ -123,7 +123,7 @@ const selectResetPasswordMailOptions = (to) => {
 const selectVerificationMailOptions = (to) => {
     return mailOptions = {
 
-        from: 'm.eminbekoz19@gmail.com',
+        from: process.env.EMAIL_AUTH_USER,
         to: to,
         subject: 'Verify your account',
         html: verificationEmailTemplate(),
