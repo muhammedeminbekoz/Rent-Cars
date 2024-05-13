@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const client = require('../../db/connection');
-const query = require('../../db/queries');
+const client = require('@db/connection');
+const query = require('@db/queries');
 
 
 const createToken = (userId) => {

@@ -1,10 +1,28 @@
-const client = require('../db/connection');
-const query = require('../db/queries');
+const client = require('@db/connection');
+const query = require('@db/queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createToken } = require('../middlewares/authentication/auth');
-const emailModule = require('../utils/email');
-const { isNullOrUndefinedOrEmpty } = require('../utils/helpers/valueHelper');
+const { createToken } = require('@middlewares/authentication/auth');
+const emailModule = require('@utils/email');
+const { isNullOrUndefinedOrEmpty } = require('@helpers/valueHelper');
+
+
+/* * @swagger
+* /api/user/getAll:
+* get:
+* summary: asdada
+* description: Get a specific resource by ID.
+* parameters:
+* — in: path
+* name: id
+* required: true
+* description: ID of the resource to retrieve.
+* schema:
+* type: string
+* responses:
+* 200:
+* description: Successful response
+*/
 
 const getUserById = (req, res) => {
     const token = req?.headers?.authorization?.split(' ')[1];

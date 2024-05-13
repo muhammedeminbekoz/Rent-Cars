@@ -2,7 +2,7 @@ const client = require('../db/connection');
 const query = require('../db/queries');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const { isNullOrUndefinedOrEmpty } = require('../utils/helpers/valueHelper');
+const { isNullOrUndefinedOrEmpty } = require('../helpers/valueHelper');
 moment().format();
 
 

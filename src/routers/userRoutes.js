@@ -1,7 +1,8 @@
+require('module-alias/register')
 const router = require('express').Router();
-const userController = require('../controllers/userController');
-const { registerValidation, loginValidation, updateValidation, verifyValidation } = require('../middlewares/validation/userValidation')
-const authorization = require('../middlewares/authentication/auth');
+const userController = require('@controllers/userController');
+const { registerValidation, loginValidation, updateValidation, verifyValidation } = require('@middlewares/validation/userValidation')
+const authorization = require('@middlewares/authentication/auth');
 
 router.get('/get-user-by-id', authorization.tokenCheck, userController.getUserById);
 router.post('/register', registerValidation, userController.register);
