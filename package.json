@@ -18,10 +18,13 @@
     "express-rate-limit": "^7.2.0",
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "moment": "^2.30.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "compilerOptions": {
     "baseUrl": "src"
@@ -31,5 +34,15 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "_moduleAliases": {
+    "@root" : ".",
+    "@src": "src",
+    "@controllers": "src/controllers",
+    "@helpers": "src/helpers",
+    "@middlewares": "src/middlewares",
+    "@routers": "src/routers",
+    "@utils": "src/utils",
+    "@db": "src/db"
+  }
 }
