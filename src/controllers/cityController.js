@@ -1,5 +1,6 @@
-const client = require('../db/connection');
-const query = require('../db/queries');
+require('module-alias/register')
+const client = require('@db/connection');
+const query = require('@db/queries');
 
 const listCity = (req, res) => {
     const cityname = req.params.cityname.charAt(0).toUpperCase() + req.params.cityname.slice(1).toLowerCase().trim();

@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require('cors');
 require('module-alias/register');
 const limiter = require('@middlewares/security/rateLimit')

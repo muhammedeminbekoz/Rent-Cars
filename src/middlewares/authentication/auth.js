@@ -1,3 +1,4 @@
+require('module-alias/register')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const client = require('@db/connection');

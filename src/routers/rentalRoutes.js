@@ -1,3 +1,4 @@
+require('module-alias/register')
 const router = require('express').Router();
 const rental = require('@controllers/rentalController');
 

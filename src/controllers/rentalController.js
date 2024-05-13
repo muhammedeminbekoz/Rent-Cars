@@ -1,8 +1,10 @@
-const client = require('../db/connection');
-const query = require('../db/queries');
+require('module-alias/register')
+const client = require('@db/connection');
+const query = require('@db/queries');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const { isNullOrUndefinedOrEmpty } = require('../helpers/valueHelper');
+const { isNullOrUndefinedOrEmpty } = require('@helpers/valueHelper');
+const { formatUTC3 } = require('@helpers/dateHelper');
 moment().format();
 
 
@@ -36,7 +38,7 @@ const addResultOfRental = (req, res) => {
             const userId = verifyedToken.sub.userId;
 
             client.execute(query.addResultOfRental,
-                [carId, firstname, lastname, startingDate, endingDate, licanceNo, tckNo, dob, dropoffDate, dropoffOfficeId, phoneNumber, pickupDate, pickupOfficeId, userId],
+                [carId, firstname, lastname, startingDate, endingDate, licanceNo, tckNo, dob, formatUTC3(dropoffDate), dropoffOfficeId, phoneNumber, formatUTC3(pickupDate), pickupOfficeId, userId],
                 { prepare: true },
                 (err, result) => {
                     if (err) res.status(500).json({ success: false, message: "server error" })

@@ -1,3 +1,4 @@
+require('module-alias/register')
 const router = require('express').Router();
 const cityController = require('@controllers/cityController');
 const officeController = require('@controllers/officeController');

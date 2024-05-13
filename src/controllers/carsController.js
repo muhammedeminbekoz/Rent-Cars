@@ -1,5 +1,6 @@
-const client = require('../db/connection');
-const query = require('../db/queries');
+require('module-alias/register')
+const client = require('@db/connection');
+const query = require('@db/queries');
 const nodecron = require('node-cron')
 
 
